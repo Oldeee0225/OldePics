@@ -1,0 +1,24 @@
+/* Punto de entrada de estilos: cada sección vive en su propio archivo */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Italiana&display=swap');
+
+@import './base.css';
+@import './buttons.css';
+@import './header.css';
+@import './footer.css';
+@import './cards.css';
+
+/* Portada */
+@import './hero.css';
+@import './featured.css';
+@import './home.css';
+
+/* Páginas interiores, visor y búsqueda */
+@import './pages.css';
+@import './viewer.css';
+
+/* Área privada */
+@import './auth.css';
+@import './admin.css';
+
+/* Ajustes finales para móviles */
+@import './mobile.css';

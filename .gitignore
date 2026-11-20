@@ -1,0 +1,21 @@
+# Dependencias y build
+node_modules
+dist
+*.tsbuildinfo
+
+# Variables de entorno (claves de Supabase): NUNCA se suben
+.env
+.env.local
+.env.*.local
+*.local
+
+# Fotos originales a tamaño completo (pesadas; la web usa public/img).
+# Guárdalas con copia de seguridad aparte (disco, Google Drive…).
+/assets/
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+*.log
+.vscode/*
+!.vscode/extensions.json

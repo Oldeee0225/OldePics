@@ -1,0 +1,92 @@
+/* =====================================================================
+   Ajustes finales para móviles (se carga al final, después del resto)
+   ===================================================================== */
+
+/* Evita el "rebote" de color al tocar en iOS/Android */
+button, a { -webkit-tap-highlight-color: transparent; }
+
+@media (max-width: 620px) {
+  /* iOS hace zoom en campos con letra < 16px: todos a 16px */
+  input, textarea, select { font-size: 16px !important; }
+
+  /* ---------- Titulares que se cortaban raro ---------- */
+  .section-head h2 { font-size: 40px; }
+  .page-hero h1 { font-size: 46px; }
+  .about-hero h1 { font-size: 44px; line-height: 1; }
+  .contact-block h2 { font-size: 42px; line-height: 1; }
+  .about-copy h2 { font-size: 40px; }
+  .album-hero h1 { font-size: 52px; }
+  .album-gate h2 { font-size: 38px; }
+  .empty-state h3 { font-size: 30px; line-height: 1.15; }
+
+  /* ---------- Textos legibles ---------- */
+  .page-hero p,
+  .section-head > p,
+  .about-copy > p:not(.lead),
+  .about-story p:not(.lead),
+  .album-hero p,
+  .empty-state p,
+  .album-gate p { font-size: 15px; line-height: 1.7; }
+  .about-copy .lead { font-size: 21px; }
+  .about-story .lead { font-size: 24px; }
+  .collection-card p, .album-info p { font-size: 14px; }
+  .collection-card small, .album-info > span, .album-info small { font-size: 10px; }
+  .album-actions > p { font-size: 18px; line-height: 1.7; }
+
+  /* ---------- Footer: más grande y fácil de tocar ---------- */
+  footer { padding-top: 70px; }
+  .footer-main p,
+  .footer-main a,
+  .footer-main button,
+  .footer-main .social-links a { font-size: 14px; }
+  .footer-main > div { gap: 4px; }
+  .footer-main > div > button,
+  .footer-main .social-links a { padding: 8px 0; }
+  .footer-main b { font-size: 10px; margin-bottom: 6px; }
+  .footer-bottom { font-size: 9px; margin-top: 50px; }
+
+  /* ---------- Contacto en About ---------- */
+  .contact-block a { font-size: 16px; }
+  .contact-block .social-links a { padding: 6px; margin-left: -6px; }
+
+  /* ---------- Galería ---------- */
+  .filters button { font-size: 11px; padding: 14px 0; }
+  .gallery-tools select { padding: 10px 8px; }
+  .gallery-count { font-size: 10px; }
+
+  /* ---------- Visor de fotos ---------- */
+  .viewer-nav { width: 44px; height: 44px; }
+  .viewer-nav.prev { left: 8px; }
+  .viewer-nav.next { right: 8px; }
+  .viewer-info h1 { font-size: 34px; }
+  .viewer-info dl > div { font-size: 11px; }
+
+  /* ---------- Login ---------- */
+  .login-form { padding: 90px 24px 60px; }
+  .login-form form > label { font-size: 10px; }
+  .login-form p { font-size: 15px; }
+
+  /* ---------- Admin ---------- */
+  .admin-top h1 { font-size: 34px; }
+  .admin-top p, .admin-top > div > span { font-size: 12px; }
+  .stats p { font-size: 10px; }
+  .album-list b { font-size: 14px; }
+  .album-list small { font-size: 11px; }
+  .album-actions-admin { flex-wrap: wrap; }
+  .album-actions-admin button { padding: 10px 12px; font-size: 10px; }
+  .upload-details > label:not(.toggle-row) { font-size: 10px; }
+  .toggle-row b { font-size: 12px; }
+  .toggle-row small, .field-hint { font-size: 10px; }
+  .set-cover { font-size: 9px; padding: 8px 4px; }
+  .upload-grid { grid-template-columns: repeat(3, 1fr); }
+  .cover-preview img, .cover-empty { aspect-ratio: 3 / 2; }
+  .admin-side nav button { min-width: 64px; }
+}
+
+/* Pantallas muy estrechas (iPhone SE, Android pequeños) */
+@media (max-width: 360px) {
+  :root { --pad-x: 18px; }
+  .hero-copy h1 { font-size: 44px; }
+  .about-hero h1, .contact-block h2 { font-size: 38px; }
+  .section-head h2 { font-size: 36px; }
+}

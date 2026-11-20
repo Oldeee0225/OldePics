@@ -1,0 +1,77 @@
+/* ---------- Tarjeta de foto (galería, álbum) ---------- */
+.image-card {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  text-align: left;
+  background: #222;
+}
+.image-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.5s;
+}
+.image-card:hover img { transform: scale(1.035); filter: brightness(0.82); }
+
+.image-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.75), transparent 45%);
+  opacity: 0.3;
+  transition: opacity 0.3s;
+}
+.image-card:hover .image-shade { opacity: 1; }
+
+.image-meta {
+  position: absolute;
+  inset: auto 28px 25px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.35s, transform 0.35s;
+}
+.image-card:hover .image-meta,
+.image-card:focus-visible .image-meta { opacity: 1; transform: none; }
+.image-meta small {
+  grid-column: 1;
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.image-meta strong { grid-column: 1; margin-top: 6px; font-size: 19px; font-weight: 400; }
+.image-meta i { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+
+/* En pantallas táctiles no hay hover: mostramos siempre el título */
+@media (hover: none) {
+  .image-shade { opacity: 0.8; }
+  .image-meta { opacity: 1; transform: none; }
+}
+
+/* ---------- Masonry (galería y álbum) ----------
+   Cuadrícula de filas de 10px: cada foto ocupa tantas filas como su altura.
+   Llena las columnas de izquierda a derecha (también con pocas fotos) y
+   'dense' rellena los huecos que dejan fotos de distinta altura. */
+.masonry {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: 10px;
+  grid-auto-flow: row dense;
+  column-gap: 18px;
+  padding-bottom: 120px;
+}
+.masonry .image-card { width: 100%; height: auto; margin: 0 0 18px; }
+.masonry .portrait { grid-row: span 61; }   /* ≈ 592px */
+.masonry .landscape { grid-row: span 39; }  /* ≈ 372px */
+
+@media (max-width: 900px) {
+  .masonry { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .masonry .portrait { grid-row: span 48; }
+  .masonry .landscape { grid-row: span 31; }
+}
+@media (max-width: 620px) {
+  .masonry { grid-template-columns: 1fr; padding-bottom: 80px; }
+  .masonry .portrait { grid-row: span 50; }
+  .masonry .landscape { grid-row: span 30; }
+}

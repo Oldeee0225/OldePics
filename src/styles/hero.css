@@ -1,0 +1,92 @@
+/* ---------- Hero (portada) ---------- */
+.hero {
+  position: relative;
+  min-height: 700px;
+  height: 100vh;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Foto de fondo: algo más oscura y desaturada para el look editorial */
+.hero > img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 60% 40%;
+  filter: brightness(0.8) saturate(0.82) contrast(1.05);
+}
+
+/* Degradado: oscuro a la izquierda (texto) y arriba (menú) */
+.hero-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(8, 8, 7, 0.78) 0%, rgba(8, 8, 7, 0.45) 40%, rgba(8, 8, 7, 0.05) 75%),
+    linear-gradient(180deg, rgba(8, 8, 7, 0.55) 0%, rgba(8, 8, 7, 0) 22%, rgba(8, 8, 7, 0) 70%, rgba(8, 8, 7, 0.6) 100%);
+}
+
+.hero-copy {
+  margin: auto 0;
+  padding: 60px var(--pad-x) 90px clamp(24px, 8vw, 130px);
+  max-width: 900px;
+}
+.hero-copy .eyebrow { color: #d7d0c3; }
+
+.hero-copy h1 {
+  margin: 29px 0 27px;
+  font-size: clamp(54px, 6.8vw, 105px);
+  line-height: 0.93;
+}
+.hero-copy h1 em { color: var(--ink-soft); }
+
+.hero-copy p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #d1d1ce;
+}
+
+.hero-buttons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+
+/* Indicador 01 —— 12 (abajo derecha) */
+.hero-index {
+  position: absolute;
+  right: 54px;
+  bottom: 46px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+.hero-index i { width: 58px; height: 1px; background: #fff; }
+
+/* "Scroll to explore" vertical (abajo izquierda) */
+.scroll-label {
+  position: absolute;
+  left: 21px;
+  bottom: 66px;
+  writing-mode: vertical-rl;
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* ---------- Hero móvil ---------- */
+@media (max-width: 620px) {
+  .hero { min-height: 680px; }
+  .hero-shade {
+    background: linear-gradient(180deg, rgba(8, 8, 7, 0.6) 0%, rgba(8, 8, 7, 0.35) 40%, rgba(8, 8, 7, 0.8) 100%);
+  }
+  .hero-copy { padding: 40px 24px 80px; }
+  .hero-copy h1 { font-size: 52px; }
+  .hero-buttons { flex-direction: column; align-items: stretch; }
+  .hero-index { right: 24px; bottom: 25px; }
+  .scroll-label { display: none; }
+}

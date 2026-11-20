@@ -1,0 +1,125 @@
+/* ---------- Visor de foto (pantalla completa) ---------- */
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 370px;
+  grid-template-rows: 70px calc(100vh - 70px) auto;
+  background: #090909;
+}
+.viewer-top {
+  grid-column: 1 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  border-bottom: 1px solid var(--line);
+}
+.viewer-top .logo img { width: 52px; height: 52px; }
+.viewer-top > span { font-size: 9px; letter-spacing: 0.2em; }
+.viewer-top > button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.viewer-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 40px;
+  background: #050505;
+}
+.viewer-stage img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.viewer-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 42px;
+  height: 42px;
+  transform: translateY(-50%);
+  border: 1px solid #555;
+  background: rgba(0, 0, 0, 0.4);
+  transition: border-color 0.2s;
+}
+.viewer-nav:hover { border-color: #fff; }
+.viewer-nav.prev { left: 20px; }
+.viewer-nav.next { right: 20px; }
+
+.viewer-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 30px;
+  padding: 50px 34px;
+  border-left: 1px solid var(--line);
+}
+.viewer-info h1 { margin: 15px 0; font-family: var(--font-serif); font-size: 42px; letter-spacing: 0; }
+.viewer-info p { font-size: 12px; line-height: 1.8; color: #888; }
+.viewer-info dl { border-top: 1px solid var(--line); }
+.viewer-info dl > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 9px;
+}
+.viewer-info dt { letter-spacing: 0.15em; text-transform: uppercase; color: #666; }
+.viewer-info dd { color: #bbb; }
+.viewer-actions { display: grid; gap: 9px; }
+
+.viewer-related { grid-column: 1 / 3; padding: 100px 7vw; }
+.viewer-related h2 { margin: 15px 0 35px; font-family: var(--font-serif); font-size: 45px; letter-spacing: 0; }
+.viewer-related > div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+.viewer-related button { text-align: left; }
+.viewer-related img { width: 100%; height: 260px; object-fit: cover; }
+.viewer-related button span { display: block; margin-top: 10px; font-family: var(--font-serif); font-size: 18px; }
+
+/* ---------- Búsqueda ---------- */
+.search-overlay { position: fixed; inset: 0; z-index: 110; overflow-y: auto; background: rgba(7, 7, 7, 0.98); }
+.search-close { position: absolute; right: 4vw; top: 35px; }
+.search-inner { max-width: 900px; margin: 18vh auto; padding: 30px; }
+.search-field { display: flex; align-items: center; margin-top: 25px; border-bottom: 1px solid #777; }
+.search-field input { width: 100%; padding: 20px 0; font-family: var(--font-serif); font-size: 40px; outline: none; }
+.search-results { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 35px; }
+.search-results button {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px;
+  text-align: left;
+  background: #151515;
+  transition: background 0.2s;
+}
+.search-results button:hover { background: #1e1e1e; }
+.search-results img { width: 85px; height: 65px; object-fit: cover; }
+.search-results span { display: flex; flex-direction: column; gap: 6px; }
+.search-results small { font-size: 9px; color: #777; }
+
+/* ---------- Tablet ---------- */
+@media (max-width: 900px) {
+  .viewer { grid-template-columns: 1fr; grid-template-rows: 70px 70vh auto auto; }
+  .viewer-top, .viewer-related { grid-column: 1; }
+  .viewer-info { border: 0; }
+}
+
+/* ---------- Móvil ---------- */
+@media (max-width: 620px) {
+  .viewer { display: block; }
+  .viewer-top { height: 60px; padding: 0 20px; }
+  .viewer-stage { height: 58vh; padding: 20px; }
+  .viewer-info { padding: 35px 25px; }
+  .viewer-related { padding: 70px 25px; }
+  .viewer-related > div { grid-template-columns: 1fr; }
+  .viewer-related img { height: 300px; }
+  .search-inner { margin: 12vh auto; }
+  .search-field input { font-size: 25px; }
+  .search-results { grid-template-columns: 1fr; }
+}

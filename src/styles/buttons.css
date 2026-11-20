@@ -1,0 +1,23 @@
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  min-height: 48px;
+  padding: 0 23px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  transition: background 0.25s, color 0.25s, border-color 0.25s, gap 0.25s;
+}
+
+.btn-solid { background: var(--ink); color: #111; }
+.btn-solid:hover { background: #fff; gap: 28px; }
+
+.btn-outline { border-color: rgba(255, 255, 255, 0.32); color: var(--ink); }
+.btn-outline:hover { border-color: #fff; background: rgba(255, 255, 255, 0.05); }
+
+.btn-ghost { border: 0; }
