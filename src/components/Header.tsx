@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import type { Go, Page } from '../types'
 import { PATHS } from '../lib/paths'
 import { Icon } from './Icon'
@@ -20,12 +20,13 @@ export function Header({ go }: { go: Go }) {
         {link('gallery', 'Gallery')}
         {link('collections', 'Collections')}
         {link('about', 'About')}
-        <button className="mobile-admin" onClick={() => go('login')}>Admin login</button>
         <div className="mobile-social"><SocialLinks showLabels/></div>
       </nav>
       <div className="header-actions">
         <SocialLinks size={17}/>
-        <button className="admin-link" onClick={() => go('login')}>Admin</button>
+        <Link to={PATHS.login} className="admin-link" aria-label="Admin" title="Admin">
+          <img src="/img/admin-icon.png" alt="" width={34} height={34}/>
+        </Link>
         <button className="menu-button" aria-label="Menu" onClick={() => setOpen(!open)}>
           <Icon name={open ? 'close' : 'menu'}/>
         </button>

@@ -112,3 +112,19 @@
 
 /* Sin la lupa, el separador lo pone ya el bloque de redes */
 .header-actions > .admin-link { padding-left: 0; border-left: 0; }
+
+/* ---------- Icono de admin (sustituye al texto "Admin") ---------- */
+.header-actions > .admin-link {
+  display: inline-flex;
+  border-radius: 50%;
+  transition: transform 0.25s, box-shadow 0.25s, opacity 0.25s;
+  opacity: 0.9;
+}
+.header-actions > .admin-link img { width: 34px; height: 34px; border-radius: 50%; display: block; }
+.header-actions > .admin-link:hover { opacity: 1; transform: scale(1.06); box-shadow: 0 0 0 3px rgba(200, 184, 156, 0.18); }
+.header-actions > .admin-link:focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; }
+
+/* Móvil: el icono se queda visible junto al botón de menú */
+@media (max-width: 900px) {
+  .header-actions > .admin-link img { width: 30px; height: 30px; }
+}

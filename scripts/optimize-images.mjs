@@ -78,6 +78,23 @@ await sharp(`${SRC}/OldePicsLogo.png`)
   .png({ compressionLevel: 9, palette: true })
   .toFile(`${OUT}/logo-badge.png`)
 
+// ---------- Icono del admin (navbar) ----------
+// Recorte circular justo en el borde del aro dorado (quita el halo de color
+// que trae el PNG por fuera) y versión pequeña: se muestra a ~34px.
+{
+  const CX = 616, CY = 633, R = 575          // centro y radio del aro en el original 1254×1254
+  const size = R * 2
+  const mask = Buffer.from(
+    `<svg width="${size}" height="${size}"><circle cx="${R}" cy="${R}" r="${R - 2}" fill="#fff"/></svg>`,
+  )
+  const circle = await sharp(`${SRC}/IconAdmin.png`)
+    .extract({ left: CX - R, top: CY - R, width: size, height: size })
+    .composite([{ input: mask, blend: 'dest-in' }])
+    .png()
+    .toBuffer()
+  await sharp(circle).resize(112, 112).png({ compressionLevel: 9 }).toFile(`${OUT}/admin-icon.png`)
+}
+
 // ---------- Iconos (favicon, Apple, Android) ----------
 for (const [size, name] of [[32, 'favicon-32.png'], [180, 'apple-touch-icon.png'], [192, 'icon-192.png'], [512, 'icon-512.png']]) {
   await sharp(`${SRC}/OldePicsLogo.png`).resize(size, size).png({ compressionLevel: 9 }).toFile(`public/${name}`)
