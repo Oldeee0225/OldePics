@@ -10,10 +10,12 @@ import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
 import { Icon } from '../components/Icon'
 import { FeaturedGallery } from '../components/FeaturedGallery'
+import { usePageMeta } from '../lib/meta'
 
 interface Props { go: Go; openAlbum: OpenAlbum }
 
 export function Home({ go, openAlbum }: Props) {
+  usePageMeta(null)
   const { data: albums = [], loading, error } = useQuery('albums', () => listAlbums())
 
   return (

@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom'
 import type { Go } from '../types'
+import { PATHS } from '../lib/paths'
 import { site } from '../data/site'
 import { Logo } from './Logo'
 import { SocialLinks } from './SocialLinks'
@@ -13,9 +15,9 @@ export function Footer({ go }: { go: Go }) {
         </div>
         <div>
           <b>Explore</b>
-          <button onClick={() => go('gallery')}>Gallery</button>
-          <button onClick={() => go('collections')}>Collections</button>
-          <button onClick={() => go('about')}>About</button>
+          <Link to={PATHS.gallery}>Gallery</Link>
+          <Link to={PATHS.collections}>Collections</Link>
+          <Link to={PATHS.about}>About</Link>
         </div>
         <div>
           <b>Follow</b>

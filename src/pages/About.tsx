@@ -5,8 +5,10 @@ import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
 import { Icon } from '../components/Icon'
 import { SocialLinks } from '../components/SocialLinks'
+import { usePageMeta } from '../lib/meta'
 
 export function About({ go }: { go: Go }) {
+  usePageMeta('About', 'Oldemar Gonzalez — an amateur photographer learning to see, one photo at a time.')
   return (
     <div className="dark-page">
       <Header go={go}/>

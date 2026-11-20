@@ -5,8 +5,10 @@ import { signIn } from '../lib/auth'
 import { isSupabaseConfigured } from '../lib/supabase'
 import { Icon } from '../components/Icon'
 import { Logo } from '../components/Logo'
+import { usePageMeta } from '../lib/meta'
 
 export function Login({ go }: { go: Go }) {
+  usePageMeta('Admin login')
   const [show, setShow] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import type { Album as AlbumT, Go, OpenPhoto } from '../types'
 import { getAlbum, WrongPasswordError } from '../lib/api'
 import { useQuery } from '../lib/useQuery'
+import { usePageMeta } from '../lib/meta'
 import { publicUrl } from '../lib/supabase'
 import { formatMonth } from '../lib/format'
 import { copyLink } from '../utils/share'
@@ -27,6 +28,10 @@ export function Album({ go, slug, openPhoto }: Props) {
   // 1) Datos del álbum (y sus fotos si no tiene contraseña o eres admin)
   const base = useQuery(`album:${slug}`, () => (slug ? getAlbum(slug) : Promise.resolve(null)))
   const needsPassword = !!base.data && base.data.photos === null
+  usePageMeta(
+    base.data ? base.data.album.title : base.loading ? undefined : 'Album not found',
+    base.data?.album.description,
+  )
 
   // 2) Si tiene contraseña: pedir las fotos con la contraseña escrita
   const tryKey = needsPassword && password ? `album:${slug}:unlock:${password}` : 'album:none'

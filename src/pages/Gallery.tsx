@@ -9,6 +9,7 @@ import { Footer } from '../components/Footer'
 import { Icon } from '../components/Icon'
 import { ImageCard } from '../components/ImageCard'
 import { PageHeader } from '../components/PageHeader'
+import { usePageMeta } from '../lib/meta'
 
 const PAGE = 12
 type Sort = 'newest' | 'oldest' | 'album'
@@ -16,6 +17,7 @@ type Sort = 'newest' | 'oldest' | 'album'
 interface Props { go: Go; openPhoto: OpenPhoto }
 
 export function Gallery({ go, openPhoto }: Props) {
+  usePageMeta('Gallery', 'Places, people and moments collected over time — photography by Oldemar Gonzalez.')
   // Fotos fijas del proyecto primero y luego las de álbumes públicos de Supabase
   const { data: photos = [], loading, error } = useQuery('photos', async () => [...galleryPhotos, ...await listPhotos()])
   const [filter, setFilter] = useState('All')

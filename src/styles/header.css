@@ -106,3 +106,9 @@
   .site-header .mobile-social { display: block; padding-top: 10px; border-top: 1px solid var(--line); width: 100%; }
   .site-header .mobile-social .social-links { flex-direction: column; align-items: flex-start; gap: 20px; padding-top: 16px; color: #ddd; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; }
 }
+
+/* Página actual resaltada en el menú */
+.site-header nav > a.active { color: #fff; }
+
+/* Sin la lupa, el separador lo pone ya el bloque de redes */
+.header-actions > .admin-link { padding-left: 0; border-left: 0; }

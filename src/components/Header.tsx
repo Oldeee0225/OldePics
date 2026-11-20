@@ -1,13 +1,16 @@
 import { useState } from 'react'
+import { NavLink } from 'react-router-dom'
 import type { Go, Page } from '../types'
+import { PATHS } from '../lib/paths'
 import { Icon } from './Icon'
 import { Logo } from './Logo'
 import { SocialLinks } from './SocialLinks'
 
 export function Header({ go }: { go: Go }) {
   const [open, setOpen] = useState(false)
+  // Enlaces reales: se pueden abrir en otra pestaña y Google los sigue
   const link = (p: Page, label: string) => (
-    <button onClick={() => { go(p); setOpen(false) }}>{label}</button>
+    <NavLink to={PATHS[p]} onClick={() => setOpen(false)}>{label}</NavLink>
   )
 
   return (

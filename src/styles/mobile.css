@@ -40,6 +40,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .footer-main button,
   .footer-main .social-links a { font-size: 14px; }
   .footer-main > div { gap: 4px; }
+  .footer-main > div > a,
   .footer-main > div > button,
   .footer-main .social-links a { padding: 8px 0; }
   .footer-main b { font-size: 10px; margin-bottom: 6px; }

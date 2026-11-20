@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import type { Go, Page } from '../types'
 import { site } from '../data/site'
 import { signOut } from '../lib/auth'
+import { usePageMeta } from '../lib/meta'
 import { Icon, type IconName } from '../components/Icon'
 import { Logo } from '../components/Logo'
 
@@ -12,6 +13,7 @@ const items: [Page, IconName, string][] = [
 ]
 
 export function AdminShell({ page, go, email, children }: { page: Page; go: Go; email?: string; children: ReactNode }) {
+  usePageMeta('Admin')
   const logout = async () => { await signOut(); go('home') }
 
   return (

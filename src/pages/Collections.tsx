@@ -7,8 +7,10 @@ import { EmptyState } from '../components/EmptyState'
 import { Footer } from '../components/Footer'
 import { Icon } from '../components/Icon'
 import { PageHeader } from '../components/PageHeader'
+import { usePageMeta } from '../lib/meta'
 
 export function Collections({ go, openAlbum }: { go: Go; openAlbum: OpenAlbum }) {
+  usePageMeta('Collections', 'Photo albums by Oldemar Gonzalez, grouped by place, subject and a shared feeling.')
   const { data: albums = [], loading, error } = useQuery('albums', () => listAlbums())
 
   return (
