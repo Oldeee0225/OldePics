@@ -78,4 +78,28 @@ await sharp(`${SRC}/OldePicsLogo.png`)
   .png({ compressionLevel: 9, palette: true })
   .toFile(`${OUT}/logo-badge.png`)
 
+// ---------- Iconos (favicon, Apple, Android) ----------
+for (const [size, name] of [[32, 'favicon-32.png'], [180, 'apple-touch-icon.png'], [192, 'icon-192.png'], [512, 'icon-512.png']]) {
+  await sharp(`${SRC}/OldePicsLogo.png`).resize(size, size).png({ compressionLevel: 9 }).toFile(`public/${name}`)
+}
+
+// ---------- Imagen para compartir (Open Graph: WhatsApp, Facebook, X…) ----------
+// 1200×630: foto del hero oscurecida + logo (versión transparente) centrado.
+const OG_W = 1200, OG_H = 630
+const ogBackground = await sharp(`${SRC}/Header.jpg.jpeg`)
+  .rotate()
+  .resize(OG_W, OG_H, { fit: 'cover', position: 'centre' })
+  .modulate({ brightness: 0.55, saturation: 0.8 })
+  .toBuffer()
+const vignette = Buffer.from(
+  `<svg width="${OG_W}" height="${OG_H}"><defs><radialGradient id="g" cx="50%" cy="50%" r="65%">
+    <stop offset="0%" stop-color="#000" stop-opacity="0.15"/><stop offset="100%" stop-color="#000" stop-opacity="0.75"/>
+  </radialGradient></defs><rect width="100%" height="100%" fill="url(#g)"/></svg>`,
+)
+const ogLogo = await sharp(`${OUT}/logo.png`).resize(470, 470).toBuffer()
+await sharp(ogBackground)
+  .composite([{ input: vignette }, { input: ogLogo, gravity: 'centre' }])
+  .jpeg({ quality: 86, mozjpeg: true })
+  .toFile(`${OUT}/og-image.jpg`)
+
 console.log('Images optimized → public/img')
