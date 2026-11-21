@@ -310,3 +310,94 @@
   .album-gate { padding-top: 60px; padding-bottom: 100px; }
   .album-gate form .btn { width: 100%; }
 }
+
+/* ---------- Álbum: selección y descarga múltiple ---------- */
+.album-actions > div { flex-wrap: wrap; justify-content: flex-end; }
+.download-error { margin-top: -40px; margin-bottom: 30px; font-size: 13px; color: #e08a7a; }
+
+/* Check de cada foto en modo selección */
+.image-card.is-selectable { cursor: pointer; }
+.image-card .select-check {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.25);
+  color: #111;
+  transition: background 0.2s, transform 0.2s;
+}
+.image-card.is-selectable:hover .select-check { transform: scale(1.08); }
+.image-card.is-selected .select-check { background: var(--ink); border-color: var(--ink); }
+.image-card.is-selected img { transform: scale(0.94); filter: brightness(0.85); }
+.image-card.is-selected { outline: 2px solid var(--ink); outline-offset: -2px; }
+.masonry.is-selecting .image-card:hover img { transform: none; filter: none; }
+.masonry.is-selecting .image-card.is-selected:hover img { transform: scale(0.94); filter: brightness(0.85); }
+.masonry.is-selecting { padding-bottom: 160px; }
+
+/* Barra fija inferior */
+.select-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  background: rgba(14, 14, 13, 0.96);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom);
+  animation: select-bar-in 0.25s ease-out;
+}
+@keyframes select-bar-in { from { transform: translateY(100%); } to { transform: none; } }
+.select-bar-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 72px;
+  padding: 10px var(--pad-x);
+}
+.select-count { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
+.select-error { font-size: 12px; color: #e08a7a; }
+.select-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.select-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  transition: background 0.2s, color 0.2s, border-color 0.2s, opacity 0.2s;
+}
+.select-actions button:hover:not(:disabled) { border-color: #fff; }
+.select-actions .select-download { background: var(--ink); color: #111; border-color: var(--ink); }
+.select-actions .select-download:hover:not(:disabled) { background: #fff; }
+.select-actions .select-close { width: 44px; padding: 0; justify-content: center; }
+.select-actions button:disabled { opacity: 0.4; cursor: not-allowed; }
+.select-progress {
+  position: absolute;
+  left: 0;
+  top: -1px;
+  height: 2px;
+  width: var(--p, 0%);
+  background: var(--accent);
+  transition: width 0.25s;
+}
+
+@media (max-width: 620px) {
+  .album-actions > div { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 24px; }
+  .album-actions > div .btn:last-child { grid-column: 1 / -1; }
+  .select-bar-inner { flex-wrap: wrap; gap: 10px; padding-top: 12px; padding-bottom: 12px; }
+  .select-count { font-size: 11px; }
+  .select-actions { width: 100%; margin-left: 0; }
+  .select-actions button { flex: 1; justify-content: center; padding: 0 10px; }
+  .select-actions .select-close { flex: 0 0 44px; }
+  .image-card .select-check { top: 10px; right: 10px; }
+}

@@ -1,5 +1,6 @@
-import { useState, type FormEvent } from 'react'
-import type { Album as AlbumT, Go, OpenPhoto } from '../types'
+import { useEffect, useState, type FormEvent } from 'react'
+import type { Album as AlbumT, Go, OpenPhoto, Photo } from '../types'
+import { downloadPhotos, photoFileName } from '../lib/download'
 import { getAlbum, WrongPasswordError } from '../lib/api'
 import { useQuery } from '../lib/useQuery'
 import { usePageMeta } from '../lib/meta'
@@ -83,24 +84,116 @@ export function Album({ go, slug, openPhoto }: Props) {
           title={album.title}
         />
       ) : (
-        <>
-          <div className="album-actions section-pad">
-            <p>{album.description}</p>
-            <div>
-              <Button variant="outline" onClick={() => copyLink('Album')} icon="share">Share album</Button>
-            </div>
-          </div>
-          {photos.length === 0 ? (
-            <div className="section-pad page-empty"><EmptyState title="This album has no photos yet."/></div>
-          ) : (
-            <div className="masonry section-pad album-grid">
-              {photos.map((p, i) => <ImageCard key={p.id} photo={p} label={album.title} open={() => openPhoto(photos, i)}/>)}
-            </div>
-          )}
-        </>
+        <AlbumPhotos album={album} photos={photos} openPhoto={openPhoto}/>
       )}
       <Footer go={go}/>
     </div>
+  )
+}
+
+/** Acciones del álbum + cuadrícula con modo selección y descarga múltiple. */
+function AlbumPhotos({ album, photos, openPhoto }: { album: AlbumT; photos: Photo[]; openPhoto: OpenPhoto }) {
+  const [selectMode, setSelectMode] = useState(false)
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null)
+  const [error, setError] = useState('')
+  const busy = progress !== null
+
+  const exitSelect = () => { setSelectMode(false); setSelected(new Set()) }
+
+  // Esc sale del modo selección
+  useEffect(() => {
+    if (!selectMode) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !busy) exitSelect() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [selectMode, busy])
+
+  const toggle = (id: string) => setSelected(prev => {
+    const next = new Set(prev)
+    if (next.has(id)) next.delete(id); else next.add(id)
+    return next
+  })
+  const allSelected = selected.size === photos.length
+
+  const download = async (list: Photo[]) => {
+    if (busy || list.length === 0) return
+    setError('')
+    // nombres según la posición en el álbum: thanksgiving-001.jpg…
+    const items = list.map(p => ({ photo: p, name: photoFileName(album.slug, photos.indexOf(p)) }))
+    const zipName = list.length === photos.length ? album.slug : `${album.slug}-${list.length}-photos`
+    try {
+      await downloadPhotos(items, zipName, (done, total) => setProgress({ done, total }))
+      if (selectMode) exitSelect()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Download failed. Please try again.')
+    } finally {
+      setProgress(null)
+    }
+  }
+
+  return (
+    <>
+      <div className="album-actions section-pad">
+        <p>{album.description}</p>
+        {photos.length > 0 && (
+          <div>
+            <Button variant="outline" onClick={() => copyLink('Album')} icon="share">Share</Button>
+            {!selectMode && <Button variant="outline" onClick={() => setSelectMode(true)} icon="check">Select</Button>}
+            <Button onClick={() => download(photos)} icon="download">
+              {progress && !selectMode ? `Preparing ${progress.done}/${progress.total}…` : `Download all (${photos.length})`}
+            </Button>
+          </div>
+        )}
+      </div>
+      {error && !selectMode && <p className="section-pad download-error" role="alert">{error}</p>}
+
+      {photos.length === 0 ? (
+        <div className="section-pad page-empty"><EmptyState title="This album has no photos yet."/></div>
+      ) : (
+        <div className={`masonry section-pad album-grid ${selectMode ? 'is-selecting' : ''}`}>
+          {photos.map((p, i) => (
+            <ImageCard
+              key={p.id}
+              photo={p}
+              label={album.title}
+              open={() => openPhoto(photos, i)}
+              selectMode={selectMode}
+              selected={selected.has(p.id)}
+              onToggle={() => toggle(p.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {selectMode && (
+        <div className="select-bar" role="toolbar" aria-label="Selection">
+          <div className="select-bar-inner">
+            <span className="select-count">
+              {progress ? `Preparing ${progress.done} of ${progress.total}…` : `${selected.size} selected`}
+            </span>
+            {error && <span className="select-error">{error}</span>}
+            <div className="select-actions">
+              <button type="button" onClick={() => setSelected(allSelected ? new Set() : new Set(photos.map(p => p.id)))} disabled={busy}>
+                {allSelected ? 'Clear' : 'Select all'}
+              </button>
+              <button
+                type="button"
+                className="select-download"
+                disabled={busy || selected.size === 0}
+                onClick={() => download(photos.filter(p => selected.has(p.id)))}
+              >
+                <Icon name="download" size={16}/> Download{selected.size ? ` (${selected.size})` : ''}
+              </button>
+              <button type="button" className="select-close" onClick={exitSelect} disabled={busy} aria-label="Cancel selection">
+                <Icon name="close" size={18}/>
+              </button>
+            </div>
+          </div>
+          {progress && <i className="select-progress" style={{ ['--p' as string]: `${(progress.done / progress.total) * 100}%` }}/>}
+        </div>
+      )}
+    </>
   )
 }
 
