@@ -1,5 +1,5 @@
 import { BUCKET, supabase } from './supabase'
-import type { Album, Photo } from '../types'
+import type { Album, GalleryPhoto, Photo } from '../types'
 
 // ---------------------------------------------------------------------
 //  Lectura (web pública y admin)
@@ -182,6 +182,81 @@ export async function deletePhoto(photo: Pick<Photo, 'id' | 'path' | 'thumb_path
   const { error: e1 } = await supabase.storage.from(BUCKET).remove([photo.path, photo.thumb_path])
   if (e1) throw e1
   const { error } = await supabase.from('photos').delete().eq('id', photo.id)
+  if (error) throw error
+}
+
+// ---------------------------------------------------------------------
+//  Gallery: fotos sueltas y públicas (tabla gallery_photos)
+// ---------------------------------------------------------------------
+
+/** Fotos de la Gallery subidas desde el admin, más recientes primero. */
+export async function listGalleryPhotos(): Promise<GalleryPhoto[]> {
+  if (!supabase) return []
+  const { data, error } = await supabase
+    .from('gallery_photos')
+    .select('*')
+    .order('created_at', { ascending: false })
+  if (error) {
+    // la tabla aún no existe (falta ejecutar supabase/gallery.sql): galería sin estas fotos
+    if (error.code === 'PGRST205' || error.code === '42P01') return []
+    throw error
+  }
+  return data as GalleryPhoto[]
+}
+
+/** Convierte una foto de la Gallery al formato que usan las tarjetas y el visor. */
+export const galleryToPhoto = (g: GalleryPhoto, i: number): Photo => ({
+  id: `g-${g.id}`,
+  album_id: 'gallery',
+  path: g.path,
+  thumb_path: g.thumb_path,
+  title: g.title,
+  width: g.width,
+  height: g.height,
+  sort_order: i,
+  created_at: g.created_at,
+  album: { title: g.category || 'Gallery', slug: 'gallery', location: null, shot_on: null },
+})
+
+/** Sube las dos versiones de una foto a gallery/ y crea su fila. */
+export async function uploadGalleryPhoto(
+  files: { full: Blob; thumb: Blob; width: number; height: number },
+  meta: { title?: string | null; category?: string | null },
+): Promise<GalleryPhoto> {
+  if (!supabase) throw new Error('Supabase is not configured')
+  const name = crypto.randomUUID()
+  const path = `gallery/${name}.jpg`
+  const thumbPath = `gallery/${name}-thumb.jpg`
+  const opts = { contentType: 'image/jpeg', cacheControl: '31536000', upsert: false }
+
+  const up1 = await supabase.storage.from(BUCKET).upload(path, files.full, opts)
+  if (up1.error) throw up1.error
+  const up2 = await supabase.storage.from(BUCKET).upload(thumbPath, files.thumb, opts)
+  if (up2.error) throw up2.error
+
+  const { data, error } = await supabase
+    .from('gallery_photos')
+    .insert({
+      path, thumb_path: thumbPath, width: files.width, height: files.height,
+      title: meta.title?.trim() || null, category: meta.category?.trim() || null,
+    })
+    .select()
+    .single()
+  if (error) throw error
+  return data as GalleryPhoto
+}
+
+export async function updateGalleryPhoto(id: string, patch: { title?: string | null; category?: string | null }) {
+  if (!supabase) throw new Error('Supabase is not configured')
+  const { error } = await supabase.from('gallery_photos').update(patch).eq('id', id)
+  if (error) throw error
+}
+
+export async function deleteGalleryPhoto(photo: Pick<GalleryPhoto, 'id' | 'path' | 'thumb_path'>) {
+  if (!supabase) throw new Error('Supabase is not configured')
+  const { error: e1 } = await supabase.storage.from(BUCKET).remove([photo.path, photo.thumb_path])
+  if (e1) throw e1
+  const { error } = await supabase.from('gallery_photos').delete().eq('id', photo.id)
   if (error) throw error
 }
 

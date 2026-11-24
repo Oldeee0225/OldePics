@@ -11,6 +11,7 @@ export const PATHS: Record<Page, string> = {
   admin: '/admin',
   upload: '/admin/new',
   edit: '/admin',
+  adminGallery: '/admin/gallery',
 }
 
 export const albumPath = (slug: string) => `/albums/${slug}`

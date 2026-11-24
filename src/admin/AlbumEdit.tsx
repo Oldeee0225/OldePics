@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react'
 import type { Go, Photo } from '../types'
 import { deletePhoto, getAlbum, setAlbumPassword, updateAlbum } from '../lib/api'
 import { publicUrl } from '../lib/supabase'
-import { toItems, uploadItems, warnBeforeUnload, type UploadItem, type UploadStatus } from '../lib/upload'
+import { makePreviews, toItems, uploadItems, warnBeforeUnload, type UploadItem, type UploadStatus } from '../lib/upload'
 import { invalidateQueries, useQuery } from '../lib/useQuery'
 import { Button } from '../components/Button'
 import { AdminShell } from './AdminShell'
@@ -92,6 +92,7 @@ export function AlbumEdit({ go, email, slug, openAlbum }: Props) {
     const { items, skipped } = toItems(list)
     if (skipped) setMessage(`${skipped} file(s) skipped (not an image or too large).`)
     setNewItems(prev => [...prev, ...items])
+    makePreviews(items, (id, url) => setNewItems(prev => prev.map(i => (i.id === id ? { ...i, preview: url } : i))))
   }
   const setStatus = (id: string, status: UploadStatus, err?: string) =>
     setNewItems(prev => prev.map(i => (i.id === id ? { ...i, status, error: err } : i)))

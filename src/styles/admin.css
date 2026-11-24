@@ -444,3 +444,58 @@
 .pw-status.off { color: #b3402f; }
 .password-box .album-password { margin-top: 0; }
 .album-list b { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ---------- Gallery (admin) ---------- */
+.admin-top-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.thumb-loading { display: grid; place-items: center; width: 100%; height: 100%; background: #ecebe8; }
+
+.gallery-panel { margin-top: 20px; }
+.gallery-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+.gallery-row { position: relative; display: flex; flex-direction: column; border: 1px solid #eee; background: #fafaf8; transition: opacity 0.2s; }
+.gallery-row.is-busy { opacity: 0.5; pointer-events: none; }
+.gallery-row > img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: #eee; }
+.gallery-row-fields { display: grid; gap: 6px; padding: 10px; }
+.gallery-row-fields input {
+  width: 100%;
+  padding: 8px 9px;
+  font-size: 11px;
+  background: #fff;
+  border: 1px solid #e2e2df;
+  outline: none;
+}
+.gallery-row-fields input:focus { border-color: #171717; }
+.gallery-row-actions { position: absolute; top: 8px; right: 8px; display: flex; align-items: center; gap: 6px; }
+.gallery-row-actions .danger {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #171717;
+  transition: background 0.2s, color 0.2s;
+}
+.gallery-row-actions .danger:hover { background: #b3402f; color: #fff; }
+.row-saved, .row-error {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 7px;
+  font-size: 9px;
+  background: rgba(255, 255, 255, 0.92);
+}
+.row-saved { color: #68815e; }
+.row-error { color: #b3402f; }
+
+@media (max-width: 620px) {
+  .admin-top-actions { margin-top: 20px; }
+  .admin-top-actions .btn { flex: 1; }
+  .gallery-admin-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .gallery-row-fields { padding: 8px; }
+  .gallery-row-actions .danger { width: 34px; height: 34px; }
+}

@@ -18,6 +18,7 @@ import { Login } from './pages/Login'
 import { Dashboard } from './admin/Dashboard'
 import { Upload } from './admin/Upload'
 import { AlbumEdit } from './admin/AlbumEdit'
+import { GalleryAdmin } from './admin/GalleryAdmin'
 
 export default function App() {
   const navigate = useNavigate()
@@ -48,6 +49,7 @@ export default function App() {
         <Route path="/login" element={session ? <Navigate to="/admin" replace/> : <Login go={go}/>}/>
         <Route path="/admin" element={admin(<Dashboard go={go} email={email} openAlbum={openAlbum} editAlbum={editAlbum}/>)}/>
         <Route path="/admin/new" element={admin(<Upload go={go} email={email}/>)}/>
+        <Route path="/admin/gallery" element={admin(<GalleryAdmin go={go} email={email}/>)}/>
         <Route path="/admin/albums/:slug" element={admin(<EditRoute go={go} email={email} openAlbum={openAlbum}/>)}/>
         <Route path="*" element={<NotFound go={go}/>}/>
       </Routes>

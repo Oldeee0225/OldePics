@@ -62,13 +62,14 @@ interface GridPhoto { id: string; src: string; status?: UploadItem['status']; er
  * Sirve para fotos locales (antes de subir) y para fotos ya subidas.
  */
 export function PhotoPickerGrid({
-  photos, coverId, onCover, onRemove, disabled,
+  photos, coverId, onCover, onRemove, disabled, pickCover = true,
 }: {
   photos: GridPhoto[]
   coverId: string | null
   onCover: (id: string) => void
   onRemove?: (id: string) => void
   disabled?: boolean
+  pickCover?: boolean        // false en la Gallery (no hay portada)
 }) {
   return (
     <div className="upload-grid">
@@ -76,10 +77,10 @@ export function PhotoPickerGrid({
         const isCover = coverId === p.id
         return (
           <div key={p.id} className={`upload-thumb ${p.status ?? ''} ${isCover ? 'is-cover' : ''}`}>
-            <img src={p.src} alt="" loading="lazy"/>
-            {isCover
+            {p.src ? <img src={p.src} alt="" loading="lazy"/> : <span className="thumb-loading"><i className="mini-loader"/></span>}
+            {pickCover && (isCover
               ? <span className="cover-badge"><Icon name="check" size={12}/> Cover</span>
-              : !disabled && <button type="button" className="set-cover" onClick={() => onCover(p.id)}>Set as cover</button>}
+              : !disabled && <button type="button" className="set-cover" onClick={() => onCover(p.id)}>Set as cover</button>)}
             {p.status && p.status !== 'ready' && (
               <span className="thumb-status" title={p.error}>
                 {p.status === 'done' ? <Icon name="check" size={14}/> : p.status === 'error' ? '!' : <i className="mini-loader"/>}

@@ -1,5 +1,5 @@
 import type { Photo } from '../types'
-import { updateAlbum, uploadPhoto } from './api'
+import { updateAlbum, uploadGalleryPhoto, uploadPhoto } from './api'
 import { prepareImage } from './image'
 
 export type UploadStatus = 'ready' | 'processing' | 'uploading' | 'done' | 'error'
@@ -14,14 +14,64 @@ export interface UploadItem {
 
 export const MAX_MB = 40
 
-/** Convierte una selección de archivos en items listos para subir. */
+/**
+ * Convierte una selección de archivos en items listos para subir.
+ * `preview` empieza vacío: llama a makePreviews() para generar miniaturas ligeras.
+ */
 export function toItems(list: FileList | File[]): { items: UploadItem[]; skipped: number } {
   const files = Array.from(list)
   const ok = files.filter(f => f.type.startsWith('image/') && f.size < MAX_MB * 1024 * 1024)
   return {
-    items: ok.map(file => ({ id: crypto.randomUUID(), file, preview: URL.createObjectURL(file), status: 'ready' })),
+    items: ok.map(file => ({ id: crypto.randomUUID(), file, preview: '', status: 'ready' })),
     skipped: files.length - ok.length,
   }
+}
+
+/**
+ * Genera miniaturas pequeñas (360px) de una en una, en segundo plano.
+ * Así la página no tiene que mostrar 100 originales de 10 MB (lo que puede
+ * colgar el navegador, sobre todo en móviles). Llama a onReady por cada una.
+ */
+export async function makePreviews(items: UploadItem[], onReady: (id: string, url: string) => void) {
+  for (const item of items) {
+    try {
+      const bitmap = await createImageBitmap(item.file, { imageOrientation: 'from-image' })
+      const scale = Math.min(1, 360 / Math.max(bitmap.width, bitmap.height))
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.round(bitmap.width * scale)
+      canvas.height = Math.round(bitmap.height * scale)
+      canvas.getContext('2d')!.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+      bitmap.close()
+      const blob = await new Promise<Blob | null>(r => canvas.toBlob(r, 'image/jpeg', 0.75))
+      if (blob) onReady(item.id, URL.createObjectURL(blob))
+    } catch {
+      // formato que el navegador no puede leer: se queda sin miniatura (y fallará al subir)
+    }
+  }
+}
+
+/** Sube varias fotos sueltas a la Gallery (una a una), con el mismo título/categoría opcional. */
+export async function uploadGalleryItems(
+  items: UploadItem[],
+  meta: { title?: string; category?: string },
+  opts: Pick<Options, 'onStatus' | 'onProgress'>,
+) {
+  let failed = 0
+  for (const [i, item] of items.entries()) {
+    opts.onProgress?.(i, items.length)
+    try {
+      opts.onStatus(item.id, 'processing')
+      const prepared = await prepareImage(item.file)
+      opts.onStatus(item.id, 'uploading')
+      await uploadGalleryPhoto(prepared, meta)
+      opts.onStatus(item.id, 'done')
+    } catch (err) {
+      failed++
+      opts.onStatus(item.id, 'error', err instanceof Error ? err.message : 'Upload failed')
+    }
+  }
+  opts.onProgress?.(items.length, items.length)
+  return { failed }
 }
 
 interface Options {

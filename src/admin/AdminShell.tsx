@@ -9,6 +9,7 @@ import { Logo } from '../components/Logo'
 const items: [Page, IconName, string][] = [
   ['admin', 'folder', 'Albums'],
   ['upload', 'upload', 'New album'],
+  ['adminGallery', 'image', 'Gallery'],
   ['home', 'eye', 'View site'],
 ]
 

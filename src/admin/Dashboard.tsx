@@ -49,7 +49,10 @@ export function Dashboard({ go, email, openAlbum, editAlbum }: { go: Go; email?:
           <h1>{greeting()}, {site.firstName}.</h1>
           <p>Manage your albums and what’s visible on the site.</p>
         </div>
-        <Button onClick={() => go('upload')} icon="upload">New album</Button>
+        <div className="admin-top-actions">
+          <Button variant="outline" onClick={() => go('adminGallery')} icon="image">Upload to gallery</Button>
+          <Button onClick={() => go('upload')} icon="upload">New album</Button>
+        </div>
       </div>
 
       <div className="stats">

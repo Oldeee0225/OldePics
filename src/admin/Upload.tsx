@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import type { Go } from '../types'
 import { createAlbum, setAlbumPassword, updateAlbum } from '../lib/api'
-import { toItems, uploadItems, warnBeforeUnload, type UploadItem, type UploadStatus } from '../lib/upload'
+import { makePreviews, toItems, uploadItems, warnBeforeUnload, type UploadItem, type UploadStatus } from '../lib/upload'
 import { invalidateQueries } from '../lib/useQuery'
 import { Icon } from '../components/Icon'
 import { AdminShell } from './AdminShell'
@@ -25,6 +25,7 @@ export function Upload({ go, email }: { go: Go; email?: string }) {
     const { items: next, skipped } = toItems(list)
     setMessage(skipped ? `${skipped} file(s) skipped (not an image or too large).` : '')
     setItems(prev => [...prev, ...next])
+    makePreviews(next, (id, url) => setItems(prev => prev.map(i => (i.id === id ? { ...i, preview: url } : i))))
     if (!coverId && next[0]) setCoverId(next[0].id)
   }
 

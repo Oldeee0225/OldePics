@@ -1,4 +1,4 @@
-export type Page = 'home' | 'gallery' | 'collections' | 'album' | 'about' | 'login' | 'admin' | 'upload' | 'edit'
+export type Page = 'home' | 'gallery' | 'collections' | 'album' | 'about' | 'login' | 'admin' | 'upload' | 'edit' | 'adminGallery'
 
 export type Go = (page: Page) => void
 
@@ -33,5 +33,17 @@ export interface Photo {
   album?: Pick<Album, 'title' | 'slug' | 'location' | 'shot_on'>
 }
 
-export type OpenPhoto = (list: Photo[], index: number) => void
+/** Fila de la tabla `gallery_photos` (fotos sueltas, públicas) */
+export interface GalleryPhoto {
+  id: string
+  path: string
+  thumb_path: string
+  title: string | null
+  category: string | null
+  width: number
+  height: number
+  created_at: string
+}
+
+export type OpenPhoto =(list: Photo[], index: number) => void
 export type OpenAlbum = (slug: string) => void

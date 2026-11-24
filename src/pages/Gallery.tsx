@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import type { Go, OpenPhoto } from '../types'
-import { listPhotos } from '../lib/api'
+import { galleryToPhoto, listGalleryPhotos, listPhotos } from '../lib/api'
 import { galleryPhotos } from '../data/gallery'
 import { useQuery } from '../lib/useQuery'
 import { Button } from '../components/Button'
@@ -19,7 +19,12 @@ interface Props { go: Go; openPhoto: OpenPhoto }
 export function Gallery({ go, openPhoto }: Props) {
   usePageMeta('Gallery', 'Places, people and moments collected over time — photography by Oldemar Gonzalez.')
   // Fotos fijas del proyecto primero y luego las de álbumes públicos de Supabase
-  const { data: photos = [], loading, error } = useQuery('photos', async () => [...galleryPhotos, ...await listPhotos()])
+  // Orden: fotos subidas a la Gallery desde el admin (más nuevas primero),
+  // luego las fijas del proyecto y al final las de álbumes públicos sin contraseña.
+  const { data: photos = [], loading, error } = useQuery('photos', async () => {
+    const [uploaded, fromAlbums] = await Promise.all([listGalleryPhotos(), listPhotos()])
+    return [...uploaded.map(galleryToPhoto), ...galleryPhotos, ...fromAlbums]
+  })
   const [filter, setFilter] = useState('All')
   const [query, setQuery] = useState('')
   const [sort, setSort] = useState<Sort>('newest')
