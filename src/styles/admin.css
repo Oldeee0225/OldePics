@@ -460,7 +460,8 @@
 .gallery-row.is-busy { opacity: 0.5; pointer-events: none; }
 .gallery-row > img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: #eee; }
 .gallery-row-fields { display: grid; gap: 6px; padding: 10px; }
-.gallery-row-fields input {
+.gallery-row-fields input,
+.gallery-row-fields select {
   width: 100%;
   padding: 8px 9px;
   font-size: 11px;
@@ -468,7 +469,8 @@
   border: 1px solid #e2e2df;
   outline: none;
 }
-.gallery-row-fields input:focus { border-color: #171717; }
+.gallery-row-fields input:focus,
+.gallery-row-fields select:focus { border-color: #171717; }
 .gallery-row-actions { position: absolute; top: 8px; right: 8px; display: flex; align-items: center; gap: 6px; }
 .gallery-row-actions .danger {
   display: grid;
@@ -499,3 +501,5 @@
   .gallery-row-fields { padding: 8px; }
   .gallery-row-actions .danger { width: 34px; height: 34px; }
 }
+.gallery-row-fields select { cursor: pointer; color: #171717; }
+.upload-details select { cursor: pointer; }

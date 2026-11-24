@@ -8,6 +8,7 @@ import { Button } from '../components/Button'
 import { Icon } from '../components/Icon'
 import { AdminShell } from './AdminShell'
 import { Dropzone, PhotoPickerGrid } from './UploadParts'
+import { GALLERY_CATEGORIES } from '../data/gallery'
 
 export function GalleryAdmin({ go, email }: { go: Go; email?: string }) {
   const { data: photos = [], loading, error } = useQuery('admin:gallery', listGalleryPhotos)
@@ -17,11 +18,12 @@ export function GalleryAdmin({ go, email }: { go: Go; email?: string }) {
   const [progress, setProgress] = useState(0)
   const [message, setMessage] = useState('')
 
-  // Categorías ya usadas (para sugerirlas al escribir)
-  const categories = useMemo(
-    () => [...new Set(photos.map(p => p.category).filter((c): c is string => !!c))].sort(),
-    [photos],
-  )
+  // Lista fija + cualquier categoría antigua que ya tenga alguna foto (para no perderla)
+  const categories = useMemo(() => {
+    const fixed: string[] = [...GALLERY_CATEGORIES]
+    const extra = photos.map(p => p.category).filter((c): c is string => !!c && !fixed.includes(c))
+    return [...fixed, ...new Set(extra)]
+  }, [photos])
 
   const itemsRef = useRef(items)
   itemsRef.current = items
@@ -106,16 +108,10 @@ export function GalleryAdmin({ go, email }: { go: Go; email?: string }) {
         <aside className="upload-details">
           <h2>Upload details</h2>
           <label>Category
-            <input
-              list="gallery-categories"
-              placeholder="e.g. Nature, Street, Portraits"
-              value={meta.category}
-              disabled={busy}
-              onChange={e => setMeta(m => ({ ...m, category: e.target.value }))}
-            />
+            <CategorySelect value={meta.category} options={categories} disabled={busy}
+              onChange={category => setMeta(m => ({ ...m, category }))}/>
             <small className="field-hint">Used as a filter on the Gallery page. Applies to all photos in this upload.</small>
           </label>
-          <datalist id="gallery-categories">{categories.map(c => <option key={c} value={c}/>)}</datalist>
           <label>Title (optional)
             <input
               placeholder="Same title for all, or leave empty"
@@ -142,9 +138,8 @@ export function GalleryAdmin({ go, email }: { go: Go; email?: string }) {
         {loading && <p className="admin-note">Loading…</p>}
         {error && <p className="form-error">{error.message}</p>}
         {!loading && !error && photos.length === 0 && <p className="admin-note">No photos uploaded to the gallery yet.</p>}
-        <datalist id="gallery-categories-rows">{categories.map(c => <option key={c} value={c}/>)}</datalist>
         <div className="gallery-admin-grid">
-          {photos.map(p => <GalleryRow key={p.id} photo={p}/>)}
+          {photos.map(p => <GalleryRow key={p.id} photo={p} categories={categories}/>)}
         </div>
       </section>
     </AdminShell>
@@ -152,13 +147,14 @@ export function GalleryAdmin({ go, email }: { go: Go; email?: string }) {
 }
 
 /** Una foto ya subida: miniatura + título y categoría editables + borrar. */
-function GalleryRow({ photo }: { photo: GalleryPhoto }) {
+function GalleryRow({ photo, categories }: { photo: GalleryPhoto; categories: string[] }) {
   const [title, setTitle] = useState(photo.title ?? '')
   const [category, setCategory] = useState(photo.category ?? '')
   const [state, setState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
 
-  const save = async () => {
-    const patch = { title: title.trim() || null, category: category.trim() || null }
+  // Guarda título y categoría (la lista guarda al elegir; el título al salir del campo)
+  const save = async (nextCategory = category) => {
+    const patch = { title: title.trim() || null, category: nextCategory.trim() || null }
     if (patch.title === photo.title && patch.category === photo.category) return
     setState('saving')
     try { await updateGalleryPhoto(photo.id, patch); setState('saved'); invalidateQueries() }
@@ -176,10 +172,10 @@ function GalleryRow({ photo }: { photo: GalleryPhoto }) {
     <div className={`gallery-row ${state === 'saving' ? 'is-busy' : ''}`}>
       <img src={publicUrl(photo.thumb_path)} alt="" loading="lazy"/>
       <div className="gallery-row-fields">
-        <input value={title} placeholder="Title" onChange={e => setTitle(e.target.value)} onBlur={save}
+        <input value={title} placeholder="Title" onChange={e => setTitle(e.target.value)} onBlur={() => save()}
           onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} aria-label="Title"/>
-        <input value={category} placeholder="Category" list="gallery-categories-rows" onChange={e => setCategory(e.target.value)}
-          onBlur={save} onKeyDown={e => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} aria-label="Category"/>
+        <CategorySelect value={category} options={categories} ariaLabel="Category"
+          onChange={c => { setCategory(c); save(c) }}/>
       </div>
       <div className="gallery-row-actions">
         {state === 'saved' && <span className="row-saved"><Icon name="check" size={12}/> Saved</span>}
@@ -187,5 +183,21 @@ function GalleryRow({ photo }: { photo: GalleryPhoto }) {
         <button type="button" className="danger" onClick={remove} aria-label="Delete photo"><Icon name="close" size={14}/></button>
       </div>
     </div>
+  )
+}
+
+/** Lista desplegable de categorías (con opción "sin categoría"). */
+function CategorySelect({ value, options, onChange, disabled, ariaLabel }: {
+  value: string
+  options: string[]
+  onChange: (v: string) => void
+  disabled?: boolean
+  ariaLabel?: string
+}) {
+  return (
+    <select value={value} onChange={e => onChange(e.target.value)} disabled={disabled} aria-label={ariaLabel}>
+      <option value="">— No category —</option>
+      {options.map(c => <option key={c} value={c}>{c}</option>)}
+    </select>
   )
 }

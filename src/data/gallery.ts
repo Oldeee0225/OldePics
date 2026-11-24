@@ -4,6 +4,22 @@
 import type { Photo } from '../types'
 import { featuredSrc } from './featured'
 
+/**
+ * Categorías de la Gallery (la lista desplegable del admin y los filtros
+ * de la página pública). Para añadir, quitar o renombrar: edita esta lista.
+ */
+export const GALLERY_CATEGORIES = [
+  'Nature',
+  'Landscapes',
+  'Flowers',
+  'Wildlife',
+  'Water',
+  'Street',
+  'Portraits',
+  'Events',
+  'Travel',
+] as const
+
 interface LocalPhoto {
   id: string                 // nombre del archivo original, sin extensión
   title: string
